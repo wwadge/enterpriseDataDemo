@@ -28,6 +28,8 @@ public class ApplicationTests {
             log.info(c.getName());
         }
 
+        Customer c = customerRepository.findByName("Foo");
+        log.info(c.getName());
 
 
     }
