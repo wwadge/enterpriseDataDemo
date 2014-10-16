@@ -43,7 +43,7 @@ public class ApplicationTests {
 
         c2.getAddress().add(a);
 
-        a = addressRepository.doAFoo("abc");
+        a = addressRepository.doAFunkThink("abc");
         log.info(a.getLine1());
 
     }
