@@ -1,6 +1,8 @@
 package demo;
 
+import demo.model.Address;
 import demo.model.Customer;
+import demo.repository.AddressRepository;
 import demo.repository.CustomerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -18,6 +20,9 @@ public class ApplicationTests {
     @Autowired
     CustomerRepository customerRepository;
 
+    @Autowired
+    AddressRepository addressRepository;
+
     @Test
     @Transactional
 	public void doTest() {
@@ -31,6 +36,15 @@ public class ApplicationTests {
         Customer c = customerRepository.findByName("Foo");
         log.info(c.getName());
 
+        Address a = new Address();
+        a.setLine1("abc");
+        a.setCustomer(c);
+        addressRepository.save(a);
+
+        c2.getAddress().add(a);
+
+        a = addressRepository.doAFoo("abc");
+        log.info(a.getLine1());
 
     }
 
