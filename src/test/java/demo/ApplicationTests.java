@@ -1,12 +1,18 @@
 package demo;
 
+import demo.model.Customer;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -15,31 +21,31 @@ public class ApplicationTests {
 
     @Test
     public void doTest() throws ClassNotFoundException, SQLException {
-        // Load the HSQL Database Engine JDBC driver
-        // hsqldb.jar should be in the class path or made part of the current jar
-        Class.forName("org.hsqldb.jdbcDriver");
+        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+        dataSource.setDriverClass(org.hsqldb.jdbcDriver.class);
+        dataSource.setUsername("sa");
+        dataSource.setUrl("jdbc:hsqldb:db");
+        dataSource.setPassword("");
 
-        // connect to the database.
-        Connection conn = DriverManager.getConnection("jdbc:hsqldb:db",
-                "sa",                     // username
-                "");                      // password
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-        Statement st = null;
+        System.out.println("Creating tables");
+        jdbcTemplate.execute("drop table customer if exists");
+        jdbcTemplate.execute("create table customer(" +
+                "id INTEGER, first_name varchar(255), last_name varchar(255))");
 
-        st = conn.createStatement();    // statements
-        int i = st.executeUpdate("CREATE TABLE customer ( id INTEGER IDENTITY, name VARCHAR(256))");    // run the query
+        List<Customer> results = jdbcTemplate.query(
+                "select * from customer", new Object[] {},
+                new RowMapper<Customer>() {
+                    @Override
+                    public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        return new Customer(rs.getLong("id"), rs.getString("first_name"));
+                    }
+                });
 
-        if (i == -1) {
-            System.out.println("db error");
+        for (Customer customer : results) {
+            System.out.println(customer);
         }
-
-
-        ResultSet rs = st.executeQuery("Select * from customer");    // run the query
-        while(rs.next()){
-            System.out.println(rs.getString("id"));
-        }
-        rs.close();
-        st.close();
 
     }
 

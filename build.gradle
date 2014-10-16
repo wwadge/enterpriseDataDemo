@@ -28,8 +28,12 @@ repositories {
 }
 
 
+
+
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.springframework:spring-jdbc")
     compile("org.hsqldb:hsqldb:2.0.0")
     compile("org.projectlombok:lombok:1.12.6")
     testCompile("org.springframework.boot:spring-boot-starter-test")
