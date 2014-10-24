@@ -41,10 +41,6 @@ public class ApplicationTests {
         a.setCustomer(c);
         addressRepository.save(a);
 
-        c2.getAddress().add(a);
-
-        a = addressRepository.doAFunkThink("abc");
-        log.info(a.getLine1());
 
     }
 
